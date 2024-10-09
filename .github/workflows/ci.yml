@@ -50,4 +50,4 @@ jobs:
         run: spago test --offline --censor-stats --strict --pedantic-packages -- --censor-codes=UserDefinedWarning
 
       - name: Verify formatting
-        run: purs-tidy check src test
+        run: purs-tidy format-in-place test/Test/README.purs && purs-tidy check src test
