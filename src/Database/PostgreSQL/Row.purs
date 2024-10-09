@@ -25,7 +25,7 @@ instance toSQLRowTupleOfTuples :: (ToSQLRow (Tuple a ta), ToSQLRow (Tuple b t)) 
 else instance toSQLRowTuple :: (ToSQLValue a, ToSQLRow (Tuple b t)) => ToSQLRow (Tuple a (Tuple b t)) where
   toSQLRow (Tuple a t) = toSQLValue a : toSQLRow t
 else instance toSQLRowTupleOne :: ToSQLValue a => ToSQLRow (Tuple a Unit) where
-  toSQLRow (Tuple a unit) = [ toSQLValue a ]
+  toSQLRow (Tuple a _unit) = [ toSQLValue a ]
 else instance toSQLRowTupleTwo :: (ToSQLValue a, ToSQLValue b) => ToSQLRow (Tuple a b) where
   toSQLRow (Tuple a b) = [ toSQLValue a, toSQLValue b ]
 

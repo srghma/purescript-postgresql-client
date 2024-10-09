@@ -27,7 +27,6 @@ import Database.PostgreSQL (Client, Configuration, Connection(..), PGConnectionU
 import Database.PostgreSQL.PG (command, execute, onIntegrityError, query, scalar)
 import Database.PostgreSQL.PG (withClient, withClientTransaction) as PG
 import Database.PostgreSQL.Pool (new) as Pool
-import Debug (traceM)
 import Effect (Effect)
 import Effect.Aff (Aff, error, launchAff)
 import Effect.Class (liftEffect)
@@ -506,4 +505,3 @@ validUriToPoolConfigs =
 
 notValidConnUri :: PGConnectionURI
 notValidConnUri = "postgres://urllgqrivcyakoc52275a95b7f177e2850c49de9bfa8bedc457ce860ccca664cb15db973554969@ec2-79-124-25-231.eu-west-1.compute.amazonaws.com:5432/e7cecg4nirunpo"
-
