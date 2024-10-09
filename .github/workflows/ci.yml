@@ -9,19 +9,26 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v2
+      - name: Set up a PureScript toolchain
+        uses: purescript-contrib/setup-purescript@main
         with:
-          node-version: "18.x"
+          purescript: "latest"
+          purs-tidy: "latest"
+          spago: "unstable"
 
       - name: Cache PureScript dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
-          key: ${{ runner.os }}-spago-${{ hashFiles('**/*.dhall') }}
+          key: ${{ runner.os }}-spago-${{ hashFiles('**/spago.lock') }}
           path: |
             .spago
             output
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
 
       - name: Setup env
         run: cp .env-ci .env
@@ -29,5 +36,14 @@ jobs:
       - name: Start postgres db for PG test
         run: docker-compose up -d
 
-      - run: npm install
+      - run: npm install --production
       - run: npm run-script test
+
+      - name: Build source
+        run: spago build --censor-stats --strict --pedantic-packages
+
+      - name: Run tests
+        run: spago test --offline --censor-stats --strict --pedantic-packages -- --censor-codes=UserDefinedWarning
+
+      - name: Verify formatting
+        run: purs-tidy check src test

@@ -1,0 +1,73 @@
+package:
+  name: postgresql-client
+  dependencies:
+    - aff
+    - argonaut
+    - arrays
+    - bifunctors
+    - bytestrings
+    - datetime
+    - decimals
+    - effect
+    - either
+    - enums
+    - exceptions
+    - foldable-traversable
+    - foreign
+    - foreign-object
+    - functions
+    - identity
+    - integers
+    - js-date
+    - lists
+    - maybe
+    - newtype
+    - nullable
+    - open-foreign-generic
+    - prelude
+    - profunctor
+    - record
+    - string-parsers
+    - strings
+    - transformers
+    - tuples
+    - unsafe-coerce
+  test:
+    main: Test.Main
+    dependencies:
+      - assert
+      - debug
+      - dotenv
+      - js-unsafe-stringify
+      - node-process
+      - numbers
+      - ordered-collections
+      - partial
+      - polyform
+      - polyform-batteries-core
+      - polyform-batteries-env
+      - test-unit
+      - typelevel-prelude
+      - validation
+workspace:
+  extraPackages:
+    quotient:
+      git: https://github.com/srghma/purescript-quotient.git
+      ref: master
+    bytestrings:
+      git: https://github.com/srghma/purescript-bytestrings.git
+      ref: master
+    polyform:
+      git: https://github.com/srghma/polyform.git
+      ref: master
+    js-unsafe-stringify:
+      git: https://github.com/srghma/purescript-js-unsafe-stringify.git
+      ref: master
+    polyform-batteries-core:
+      git: https://github.com/srghma/batteries-core.git
+      ref: master
+    polyform-batteries-env:
+      git: https://github.com/srghma/batteries-env.git
+      ref: master
+  packageSet:
+    registry: 60.4.0

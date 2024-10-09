@@ -11,16 +11,16 @@ export const totalCount = function(pool) {
   return function() {
     return pool.totalCount;
   };
-};
+}
 
 export const idleCount = function(pool) {
   return function() {
     return pool.idleCount;
   };
-};
+}
 
 export const waitingCount = function(pool) {
   return function() {
     return pool.waitingCount;
   };
-};
+}

@@ -38,7 +38,7 @@ export const ffiConnect = function (config) {
             };
         };
     };
-};
+}
 
 export const ffiUnsafeQuery = function(config) {
     // Either `Pool` or `Client` instance
@@ -69,11 +69,11 @@ export const ffiUnsafeQuery = function(config) {
             };
         };
     };
-};
+}
 
 export const ffiSQLState = function (error) {
     return error.code || null;
-};
+}
 
 export const ffiErrorDetail = function (error) {
     return {
@@ -96,4 +96,4 @@ export const ffiErrorDetail = function (error) {
         line: error.line || '',
         routine: error.routine || ''
     };
-};
+}

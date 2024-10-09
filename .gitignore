@@ -4,6 +4,6 @@
 /bower_components
 /node_modules
 /output
-test/README.purs
-package-lock.json
-.env
+/test/Test/README.purs
+/package-lock.json
+/.env

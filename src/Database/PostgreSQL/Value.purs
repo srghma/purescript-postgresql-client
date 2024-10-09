@@ -10,7 +10,6 @@ import Control.Monad.Error.Class (throwError)
 import Control.Monad.Except (ExceptT, except, runExcept, runExceptT)
 import Data.Argonaut (Json)
 import Data.Argonaut (stringify) as Argonaut
-import Data.Foldable (foldl)
 import Data.Array as Array
 import Data.Bifunctor (lmap)
 import Data.ByteString (ByteString)
@@ -20,6 +19,8 @@ import Data.Decimal (Decimal)
 import Data.Decimal as Decimal
 import Data.Either (Either(..), note)
 import Data.Enum (fromEnum, toEnum)
+import Data.Foldable (foldl)
+import Data.Function.Uncurried (Fn3, runFn3)
 import Data.Identity (Identity)
 import Data.Int (fromString)
 import Data.JSDate (JSDate)
@@ -28,6 +29,7 @@ import Data.List as List
 import Data.List.NonEmpty (singleton)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype, unwrap, wrap)
+import Data.Nullable as Nullable
 import Data.String (Pattern(..), split)
 import Data.Time.Duration (Milliseconds(..))
 import Data.Traversable (sequence, traverse)
@@ -70,9 +72,9 @@ else instance fromSQLValueByteString :: FromSQLValue ByteString where
     | otherwise = throwError "FromSQLValue ByteString: not a buffer"
 
 else instance fromSQLValueInstant :: FromSQLValue Instant where
-  fromSQLValue v = do
-    t <- instantFromString Left Right v
-    note ("Instant construction failed for given timestamp: " <> show t) $ instant (Milliseconds t)
+    fromSQLValue v = do
+      t <- runFn3 instantFromString Left Right v
+      note ("Instant construction failed for given timestamp: " <> show t) $ instant (Milliseconds t)
 
 else instance fromSQLValueDate :: FromSQLValue Date where
   fromSQLValue v = do
@@ -190,5 +192,5 @@ null = null_
 
 foreign import null_ :: Foreign
 foreign import instantToString :: Instant -> Foreign
-foreign import instantFromString :: (String -> Either String Number) -> (Number -> Either String Number) -> Foreign -> Either String Number
+foreign import instantFromString :: Fn3 (String -> Either String Number) (Number -> Either String Number) Foreign (Either String Number)
 foreign import unsafeIsBuffer :: forall a. a -> Boolean
