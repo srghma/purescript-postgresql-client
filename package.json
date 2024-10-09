@@ -7,9 +7,7 @@
   },
   "devDependencies": {
     "github-release-notes": "^0.17.3",
-    "paluh-litps": "^0.1.4",
-    "spago": "0.21.0",
-    "purescript": "0.15.15"
+    "paluh-litps": "^0.1.4"
   },
   "scripts": {
     "pretest": "paluh-litps compile --file README.md; mv README.purs test/Test/README.purs",

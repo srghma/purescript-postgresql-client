@@ -40,7 +40,7 @@ jobs:
       - name: Start postgres db for PG test
         run: docker compose up -d
 
-      - run: npm install --production
+      - run: npm install
       - run: npm run pretest
 
       - name: Build source
