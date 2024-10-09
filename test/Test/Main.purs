@@ -54,10 +54,10 @@ withClientTransaction = PG.withClientTransaction runExceptT
 pgEqual :: forall a. Eq a => Show a => a -> a -> AppM Unit
 pgEqual a b = lift $ equal a b
 
-withRollback ∷
-  Client →
-  AppM Unit →
-  AppM Unit
+withRollback
+  :: Client
+  -> AppM Unit
+  -> AppM Unit
 withRollback client action = begin *> action *> rollback
   where
   conn = fromClient client
@@ -66,55 +66,55 @@ withRollback client action = begin *> action *> rollback
 
   rollback = execute conn (Query "ROLLBACK TRANSACTION") Row0
 
-test ∷
-  Connection →
-  String →
-  AppM Unit →
-  TestSuite
+test
+  :: Connection
+  -> String
+  -> AppM Unit
+  -> TestSuite
 test (Connection (Left _)) name action = Test.Unit.test name $ checkPGErrors $ action
 
 test (Connection (Right client)) name action = Test.Unit.test name $ checkPGErrors $ withRollback client action
 
-transactionTest ∷
-  String →
-  AppM Unit →
-  TestSuite
+transactionTest
+  :: String
+  -> AppM Unit
+  -> TestSuite
 transactionTest name action = Test.Unit.test name $ checkPGErrors $ action
 
 checkPGErrors :: AppM Unit -> Aff Unit
 checkPGErrors action = do
   runExceptT action
     >>= case _ of
-        Left pgError -> Test.Unit.failure ("Unexpected PostgreSQL error occured:" <> unsafeStringify pgError)
-        Right _ -> pure unit
+      Left pgError -> Test.Unit.failure ("Unexpected PostgreSQL error occured:" <> unsafeStringify pgError)
+      Right _ -> pure unit
 
-now ∷ Effect Instant
+now :: Effect Instant
 now = unsafePartial $ (fromJust <<< toInstant) <$> JSDate.now
 
-date ∷ Int → Int → Int → Date
+date :: Int -> Int -> Int -> Date
 date y m d = unsafePartial $ fromJust $ canonicalDate <$> toEnum y <*> toEnum m <*> toEnum d
 
-jsdate_ ∷ Number → Number → Number → Number → Number → Number → Number → JSDate
+jsdate_ :: Number -> Number -> Number -> Number -> Number -> Number -> Number -> JSDate
 jsdate_ year month day hour minute second millisecond = jsdate { year, month, day, hour, minute, second, millisecond }
 
-noSuchDatabaseConfig :: Configuration → Configuration
+noSuchDatabaseConfig :: Configuration -> Configuration
 noSuchDatabaseConfig config = config { database = "non-existing" <> config.database }
 
-cannotConnectConfig :: Configuration → Configuration
+cannotConnectConfig :: Configuration -> Configuration
 cannotConnectConfig config =
   config
     { host = Just "127.0.0.1"
     , port = Just 45287
     }
 
-main ∷ Effect Unit
+main :: Effect Unit
 main = do
   void
     $ launchAff do
         -- Running guide from README
         void $ runExceptT $ README.run
-        config ← Config.load
-        pool ← liftEffect $ Pool.new config
+        config <- Config.load
+        pool <- liftEffect $ Pool.new config
         checkPGErrors
           $ execute (fromPool pool)
               ( Query
@@ -341,7 +341,7 @@ main = do
                                       ( \(Row1 t) ->
                                           (unwrap $ unInstant t) >= (before - before % 1000.0)
                                             && after
-                                            >= (unwrap $ unInstant t)
+                                              >= (unwrap $ unInstant t)
                                       )
                                       added
                           test handle "handling decimal value"
@@ -409,8 +409,8 @@ main = do
                                       """
                                   )
                                   (Row2 jsonIn jsonIn)
-                                (js ∷ Array (Row2 (Object Int) (Object Int))) <- query handle (Query """SELECT * FROM JSONS""") Row0
-                                liftEffect $ assert $ all (\(Row2 j1 j2) → j1 == expected && expected == j2) js
+                                (js :: Array (Row2 (Object Int) (Object Int))) <- query handle (Query """SELECT * FROM JSONS""") Row0
+                                liftEffect $ assert $ all (\(Row2 j1 j2) -> j1 == expected && expected == j2) js
                           test handle "handling Argonaut.Json as json and jsonb for an object"
                             $ do
                                 let
@@ -423,8 +423,8 @@ main = do
                                       """
                                   )
                                   (Row2 input input)
-                                (js ∷ Array (Row2 (Json) (Json))) <- query handle (Query """SELECT * FROM JSONS""") Row0
-                                liftEffect $ assert $ all (\(Row2 j1 j2) → j1 == input && j2 == input) js
+                                (js :: Array (Row2 (Json) (Json))) <- query handle (Query """SELECT * FROM JSONS""") Row0
+                                liftEffect $ assert $ all (\(Row2 j1 j2) -> j1 == input && j2 == input) js
                           test handle "handling Argonaut.Json as json and jsonb for an array"
                             $ do
                                 let
@@ -437,8 +437,8 @@ main = do
                                       """
                                   )
                                   (Row2 input input)
-                                (js ∷ Array (Row2 (Json) (Json))) <- query handle (Query """SELECT * FROM JSONS""") Row0
-                                liftEffect $ assert $ all (\(Row2 j1 j2) → j1 == input && j2 == input) js
+                                (js :: Array (Row2 (Json) (Json))) <- query handle (Query """SELECT * FROM JSONS""") Row0
+                                liftEffect $ assert $ all (\(Row2 j1 j2) -> j1 == input && j2 == input) js
                           test handle "handling jsdate value"
                             $ do
                                 let
@@ -475,22 +475,22 @@ main = do
                             testPool <- liftEffect $ Pool.new (cannotConnectConfig config)
                             runExceptT (withClient testPool doNothing)
                               >>= case _ of
-                                  Left (ClientError _ cause) -> equal cause "ECONNREFUSED"
-                                  _ -> Test.Unit.failure "foo"
+                                Left (ClientError _ cause) -> equal cause "ECONNREFUSED"
+                                _ -> Test.Unit.failure "foo"
                           Test.Unit.test "no such database" do
                             testPool <- liftEffect $ Pool.new (noSuchDatabaseConfig config)
                             runExceptT (withClient testPool doNothing)
                               >>= case _ of
-                                  Left (ProgrammingError { code }) -> equal code "3D000"
-                                  _ -> Test.Unit.failure "PostgreSQL error was expected"
+                                Left (ProgrammingError { code }) -> equal code "3D000"
+                                _ -> Test.Unit.failure "PostgreSQL error was expected"
                           Test.Unit.test "get pool configuration from postgres uri" do
                             equal (parseURI validUriToPoolConfigs.uri) (Just validUriToPoolConfigs.poolConfig)
                             equal (parseURI notValidConnUri) Nothing
 
-validUriToPoolConfigs ::
-  { uri :: PGConnectionURI
-  , poolConfig :: Configuration
-  }
+validUriToPoolConfigs
+  :: { uri :: PGConnectionURI
+     , poolConfig :: Configuration
+     }
 validUriToPoolConfigs =
   { uri: "postgres://urllgqrivcyako:c52275a95b7f177e2850c49de9bfa8bedc457ce860ccca664cb15db973554969@ec2-79-124-25-231.eu-west-1.compute.amazonaws.com:5432/e7cecg4nirunpo"
   , poolConfig:

@@ -21,10 +21,10 @@ import Polyform.Batteries.Int (validator) as Int
 import Polyform.Validator (runValidator)
 import Type.Row (type (+))
 
-validator ∷
-  ∀ err m.
-  Monad m ⇒
-  Env.Validator m (IntExpected + MissingValue + err) Env.Env Configuration
+validator
+  :: forall err m
+   . Monad m
+  => Env.Validator m (IntExpected + MissingValue + err) Env.Env Configuration
 validator =
   { database: _, host: _, idleTimeoutMillis: _, max: _, password: _, port: _, user: _ }
     <$> Env.required "PG_DB" identity
@@ -35,12 +35,12 @@ validator =
     <*> Env.optional "PG_PORT" Int.validator
     <*> Env.optional "PG_USER" identity
 
-load ∷ Aff Configuration
+load :: Aff Configuration
 load = do
   void $ DotEnv.loadFile
-  env ← liftEffect $ getEnv <#> (Object.toUnfoldable ∷ _ → Array _) >>> Map.fromFoldable
+  env <- liftEffect $ getEnv <#> (Object.toUnfoldable :: _ -> Array _) >>> Map.fromFoldable
   runValidator validator env >>= un V
     >>> case _ of
-        Left _ → do
-          throwError $ error "Configuration error. Please verify your environment and .env file."
-        Right p → pure p
+      Left _ -> do
+        throwError $ error "Configuration error. Please verify your environment and .env file."
+      Right p -> pure p

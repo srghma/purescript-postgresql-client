@@ -72,9 +72,9 @@ else instance fromSQLValueByteString :: FromSQLValue ByteString where
     | otherwise = throwError "FromSQLValue ByteString: not a buffer"
 
 else instance fromSQLValueInstant :: FromSQLValue Instant where
-    fromSQLValue v = do
-      t <- runFn3 instantFromString Left Right v
-      note ("Instant construction failed for given timestamp: " <> show t) $ instant (Milliseconds t)
+  fromSQLValue v = do
+    t <- runFn3 instantFromString Left Right v
+    note ("Instant construction failed for given timestamp: " <> show t) $ instant (Milliseconds t)
 
 else instance fromSQLValueDate :: FromSQLValue Date where
   fromSQLValue v = do
