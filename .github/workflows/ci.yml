@@ -30,17 +30,21 @@ jobs:
         with:
           node-version: "18.x"
 
+      - uses: KengoTODA/actions-setup-docker-compose@main
+        with:
+          version: "2.29.7" # the full version of `docker compose version` command
+
       - name: Setup env
         run: cp .env-ci .env
 
       - name: Start postgres db for PG test
-        run: docker-compose up -d
-
-      - run: npm install --production
-      - run: npm run-script test
+        run: docker compose up -d
 
       - name: Build source
         run: spago build --censor-stats --strict --pedantic-packages
+
+      - run: npm install --production
+      - run: npm run pretest
 
       - name: Run tests
         run: spago test --offline --censor-stats --strict --pedantic-packages -- --censor-codes=UserDefinedWarning
