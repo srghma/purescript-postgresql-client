@@ -40,11 +40,11 @@ jobs:
       - name: Start postgres db for PG test
         run: docker compose up -d
 
-      - name: Build source
-        run: spago build --censor-stats --strict --pedantic-packages
-
       - run: npm install --production
       - run: npm run pretest
+
+      - name: Build source
+        run: spago build --censor-stats --strict --pedantic-packages
 
       - name: Run tests
         run: spago test --offline --censor-stats --strict --pedantic-packages -- --censor-codes=UserDefinedWarning
