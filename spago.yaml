@@ -36,7 +36,6 @@ package:
     main: Test.Main
     dependencies:
       - assert
-      - debug
       - dotenv
       - js-unsafe-stringify
       - node-process

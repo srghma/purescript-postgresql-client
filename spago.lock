@@ -109,7 +109,6 @@
         "test": {
           "dependencies": [
             "assert",
-            "debug",
             "dotenv",
             "js-unsafe-stringify",
             "node-process",
@@ -136,7 +135,6 @@
             "contravariant",
             "control",
             "datetime",
-            "debug",
             "decimals",
             "distributive",
             "dotenv",
@@ -988,15 +986,6 @@
         "partial",
         "prelude",
         "tuples"
-      ]
-    },
-    "debug": {
-      "type": "registry",
-      "version": "6.0.2",
-      "integrity": "sha256-vmkYFuXYuELBzeauvgHG6E6Kf/Hp1dAnxwE9ByHfwSg=",
-      "dependencies": [
-        "functions",
-        "prelude"
       ]
     },
     "decimals": {
